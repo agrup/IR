@@ -10,7 +10,7 @@ def main(argv):
 	empty = True
 
 	try:
-		opts, args= getopt.getopt(argv,"hd:n",['help','dir=','empty'])
+		opts, args= getopt.getopt(argv,"hd:n:o",['help','dir=','empty',"--outputdir="])
 	except getopt.GetoptError:
 		print("pareserIR")
 		print(" -d path to source directory <origin>")
@@ -23,10 +23,12 @@ def main(argv):
 			print(" -d path to source directory <origen>")
 			print(" -n without empty words")
 			exit()
-		elif opt in ("-d","--dir"):
+		elif opt in ("-d","--dir="):
 			dirname = arg
 		elif opt in ("-n","--empty"):
 			empty = False	
+		elif opt in("-o","--outputdir="):
+			output = arg
 
 	word_count = 0
 	word_dic = {}
@@ -34,7 +36,7 @@ def main(argv):
 
 	if isdir(dirname):
 		files = listdir(dirname)
-		outputFile = open("concatenacion.txt",'w')
+		outputFile = open(output+".txt",'w')
 		print(files)	
 		for fileI in files:
 			lines = open(dirname+'/'+fileI,'r').readlines()
