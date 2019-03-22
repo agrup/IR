@@ -8,9 +8,10 @@ from os.path import isdir
 def main(argv):
 	dirname = ""
 	empty = True
+	output = "output"
 
 	try:
-		opts, args= getopt.getopt(argv,"hd:n:o",['help','dir=','empty',"--outputdir="])
+		opts, args= getopt.getopt(argv,"hd:n:o:")
 	except getopt.GetoptError:
 		print("pareserIR")
 		print(" -d path to source directory <origin>")
@@ -22,18 +23,18 @@ def main(argv):
 			print("pareserIR")
 			print(" -d path to source directory <origen>")
 			print(" -n without empty words")
+			print(" -o output file name")
 			exit()
-		elif opt in ("-d","--dir="):
+		elif opt in ("-d"):
 			dirname = arg
-		elif opt in ("-n","--empty"):
+		elif opt in ("-n"):
 			empty = False	
-		elif opt in("-o","--outputdir="):
+		elif opt in("-o"):
 			output = arg
 
 	word_count = 0
 	word_dic = {}
-
-
+	
 	if isdir(dirname):
 		files = listdir(dirname)
 		outputFile = open(output+".txt",'w')
@@ -56,7 +57,7 @@ def main(argv):
 			
 		for i in range(0,5):
 			outputFile.write(ordered_keys[i]+": "+ str(word_dic[ordered_keys[i]])+"\n") 
-	outputFile.close()	
+		outputFile.close()	
 
 if __name__ == "__main__":
    main(sys.argv[1:])

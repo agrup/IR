@@ -1,0 +1,11 @@
+hola como estas soy un archivo con palabras
+que tal soy algo matematico jaja na soy solo texto
+no tengo nada hola y chau
+Cantidad de palabras: 24
+Cantidad de palabras unicas: 21
+Mas frecuentes:
+soy: 3
+hola: 2
+como: 1
+estas: 1
+un: 1
