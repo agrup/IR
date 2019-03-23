@@ -1,8 +1,9 @@
 import sys
+sys.path.append("modulos/dictionary.py")
 import getopt
 from os import listdir
 from os.path import isdir
-
+import modulos.dictionary as dictionary
 
 
 def main(argv):
@@ -11,7 +12,7 @@ def main(argv):
 	output = "output"
 
 	try:
-		opts, args= getopt.getopt(argv,"hd:n:o:")
+		opts, args= getopt.getopt(argv,"hd:no:")
 	except getopt.GetoptError:
 		print("pareserIR")
 		print(" -d path to source directory <origin>")
@@ -28,7 +29,7 @@ def main(argv):
 		elif opt in ("-d"):
 			dirname = arg
 		elif opt in ("-n"):
-			empty = False	
+			empty = False
 		elif opt in("-o"):
 			output = arg
 
@@ -38,18 +39,18 @@ def main(argv):
 	if isdir(dirname):
 		files = listdir(dirname)
 		outputFile = open(output+".txt",'w')
-		print(files)	
+		vacias = dictionary.get_vacias("extras/vacias.txt")
 		for fileI in files:
 			lines = open(dirname+'/'+fileI,'r').readlines()
 			for line in lines:
-				outputFile.write(line)
 				words = line.split()
 				for word in words:
-					word_count+=1
-					if(word in word_dic):
-						word_dic[word]+=1
-					else:
-						word_dic.update({word:1})
+					if (word not in vacias):	
+						word_count+=1
+						if(word in word_dic):
+							word_dic[word]+=1
+						else:
+							word_dic.update({word:1})
 		outputFile.write("Cantidad de palabras: "+ str(word_count)+"\n")
 		outputFile.write("Cantidad de palabras unicas: "+str(len(word_dic.keys()))+"\n")
 		outputFile.write("Mas frecuentes:"+"\n")

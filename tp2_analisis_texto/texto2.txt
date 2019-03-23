@@ -1,0 +1,8 @@
+Cantidad de palabras: 17
+Cantidad de palabras unicas: 11
+Mas frecuentes:
+hola: 5
+soy: 3
+archivo: 1
+palabras: 1
+algo: 1
