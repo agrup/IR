@@ -1,10 +1,11 @@
 import sys
-sys.path.append("modulos/dictionary.py")
+#sys.path.append("modulos/dictionary.py")
 import getopt
 from os import listdir
 from os.path import isdir
 import modulos.dictionary as dictionary
 from modulos.tokenizer import tokenizar
+import collections
 
 def main(argv):
 	dirname = ""
@@ -46,7 +47,7 @@ def main(argv):
 			file_tokens =[]
 			tokens = []
 			file_count +=1
-			lines = open(dirname+'/'+fileI,'r').readlines()
+			lines = open(dirname+'/'+fileI,'r',encoding="ISO-8859-1").readlines()
 			tokens.extend(tokenizar(lines)) 
 			if not empty:
 				vacias = dictionary.get_vacias("extras/vacias.txt")
@@ -63,11 +64,11 @@ def main(argv):
 					word_dic[token]=1,1
 					file_tokens.append(token)		
 
-
-		ordered_keys = sorted(word_dic, key=word_dic.get, reverse=True)
-		
-		for token in ordered_keys:
-			outputFile.write(token +": "+ str(word_dic[token])+"\n") 
+		#print(sorted(word_dic))
+		ordered_keys = sorted(word_dic)
+		for key in ordered_keys:
+			cf,df = word_dic[key]
+			outputFile.write(str(key)+"\t"+str(cf)+"\t"+str(df)+"\n") 
 		outputFile.close()	
 
 if __name__ == "__main__":
