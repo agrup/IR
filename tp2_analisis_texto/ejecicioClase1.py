@@ -4,12 +4,12 @@ import getopt
 from os import listdir
 from os.path import isdir
 import modulos.dictionary as dictionary
-
+from modulos.tokenizer import tokenizar
 
 def main(argv):
 	dirname = ""
 	empty = True
-	output = "output"
+	output = "terminos"
 
 	try:
 		opts, args= getopt.getopt(argv,"hd:no:")
@@ -35,29 +35,39 @@ def main(argv):
 
 	word_count = 0
 	word_dic = {}
+	vacias = []
+	file_count=0
+
 	
 	if isdir(dirname):
 		files = listdir(dirname)
 		outputFile = open(output+".txt",'w')
-		vacias = dictionary.get_vacias("extras/vacias.txt")
 		for fileI in files:
+			file_tokens =[]
+			tokens = []
+			file_count +=1
 			lines = open(dirname+'/'+fileI,'r').readlines()
-			for line in lines:
-				words = line.split()
-				for word in words:
-					if (word not in vacias):	
-						word_count+=1
-						if(word in word_dic):
-							word_dic[word]+=1
-						else:
-							word_dic.update({word:1})
-		outputFile.write("Cantidad de palabras: "+ str(word_count)+"\n")
-		outputFile.write("Cantidad de palabras unicas: "+str(len(word_dic.keys()))+"\n")
-		outputFile.write("Mas frecuentes:"+"\n")
+			tokens.extend(tokenizar(lines)) 
+			if not empty:
+				vacias = dictionary.get_vacias("extras/vacias.txt")
+				tokens = dictionary.sacar_palabras_vacias(tokens,vacias)
+			for token in tokens:	
+				if(token in word_dic):
+					cf,df = word_dic[token]
+					if (token in file_tokens):
+						word_dic[token] = cf+1, df
+					else:
+						file_tokens.append(token)
+						word_dic[token] = cf+1, df+1
+				else:
+					word_dic[token]=1,1
+					file_tokens.append(token)		
+
+
 		ordered_keys = sorted(word_dic, key=word_dic.get, reverse=True)
-			
-		for i in range(0,5):
-			outputFile.write(ordered_keys[i]+": "+ str(word_dic[ordered_keys[i]])+"\n") 
+		
+		for token in ordered_keys:
+			outputFile.write(token +": "+ str(word_dic[token])+"\n") 
 		outputFile.close()	
 
 if __name__ == "__main__":
