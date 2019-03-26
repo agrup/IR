@@ -9,7 +9,15 @@ Moverse entre ejercicios
 ========================
 git checkout "etiqueta del ejercicio"
 
-ejercicio
+ejercicios
 =========
 
-git checkout ej1-a
+ej1 a)
+------
+
+git checkout ej1-pa
+
+ej2 b)
+---
+
+git checkout ej1-b
