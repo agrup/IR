@@ -1,0 +1,21 @@
+de	36330
+la	15488
+en	10828
+el	7937
+del	4985
+que	4881
+los	4116
+las	3305
+para	3154
+se	3008
+
+paronzini	1
+manna	1
+mondelo	1
+lovato	1
+aseguinolaza	1
+realizador	1
+riganti	1
+plataformas	1
+universitas	1
+intro	1

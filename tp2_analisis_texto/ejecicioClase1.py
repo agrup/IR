@@ -21,6 +21,7 @@ def main(argv):
 	output = "terminos"
 	list_empty="extras/vacias.txt"
 	estadistica="estadisticas.txt"
+	frecuencia="frecuencias.txt"
 
 
 
@@ -148,7 +149,20 @@ def main(argv):
 			static.write(str(min_document_len_terms)+"\t"+str(min_document_len_tokens)+"\t\n")
 			static.write(str(max_document_len_terms)+"\t"+str(max_document_len_tokens)+"\t\n")
 			static.write(str(count_terms__onece)+"\t\n")
-			
+		
+		sorted_freq = sorted(word_dic, key=word_dic.get, reverse=True)
+		freq = sorted_freq[0:10]
+		less_freq = sorted_freq[len(sorted_freq)-10:len(sorted_freq)]
+		with open(frecuencia,"w") as frecuecia_file:
+			for token in freq:
+				cf,df = word_dic[token]
+				frecuecia_file.write(str(token)+"\t"+str(cf)+"\n")
+				print(str(token)+"\t"+str(cf)+"\n")
+			frecuecia_file.write("\n")
+			for token in less_freq:
+				cf,df = word_dic[token]
+				frecuecia_file.write(str(token)+"\t"+str(cf)+"\n")
+				print(str(token)+"\t"+str(cf)+"\n")			
 
 if __name__ == "__main__":
    main(sys.argv[1:])
