@@ -11,7 +11,6 @@ def tokenizar(lines):
     tokens = []
 
     for line in lines:
-        
         line = re.sub(r'[^a-zA-Z]', ' ', line)
         words = line.split()
         for word in words:

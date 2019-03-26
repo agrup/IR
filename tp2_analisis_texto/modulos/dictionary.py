@@ -3,12 +3,12 @@ from os.path import isdir
 
 
 def sacar_palabras_vacias(lista_tokens,lista_vacias):
-	newtokens = []
-	for token in lista_tokens:
-		if (token not in lista_vacias):
-			newtokens.append(token)
-	return newtokens
-
+	# newtokens = []
+	# for token in lista_tokens:
+	# 	if (token not in lista_vacias):
+	# 		newtokens.append(token)
+	# return newtokens
+	return[token for token in lista_tokens if token not in lista_vacias]
 
 def get_vacias(file):
 	emptys = []
