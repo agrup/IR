@@ -7,31 +7,43 @@ import modulos.dictionary as dictionary
 from modulos.tokenizer import tokenizar
 import collections
 
+
+def help():
+	print("pareserIR")
+	print(" -d path to source directory <origen>")
+	print(" -n without empty words")
+	#print(" -o output file name")
+
+
 def main(argv):
 	dirname = ""
 	empty = True
 	output = "terminos"
 	list_empty="extras/vacias.txt"
+	estadistica="estadisticas.txt"
+
+
+
 	if len(sys.argv) <= 1:
-		print("pareserIR")
-		print(" -d path to source directory <origen>")
-		print(" -n without empty words")
-		print(" -o output file name")
+		help()
+		# print("pareserIR")
+		# print(" -d path to source directory <origen>")
+		# print(" -n without empty words")
+		# print(" -o output file name")
 		exit()
 	try:
 		opts, args= getopt.getopt(argv,"hd:no:")
 	except getopt.GetoptError:
-		print("pareserIR")
-		print(" -d path to source directory <origin>")
-		print(" -n without empty words")
+		help()
 		sys.exit(2)
 
 	for opt, arg in opts:
 		if opt=='-h':
-			print("pareserIR")
-			print(" -d path to source directory <origen>")
-			print(" -n without empty words")
-			print(" -o output file name")
+			help()
+			# print("pareserIR")
+			# print(" -d path to source directory <origen>")
+			# print(" -n without empty words")
+			# print(" -o output file name")
 			exit()
 		elif opt in ("-d"):
 			dirname = arg
@@ -128,7 +140,15 @@ def main(argv):
 		print(str(max_document_len_terms)+"\t"+str(max_document_len_tokens))
 		print(count_terms__onece)
 
-		#with open(estadistica,"w")
+		with open(estadistica,"w") as static:
+			static.write(str(file_count)+"\t\n")
+			static.write(str(tokens_count)+" "+str(terminos_count)+"\t\n")
+			static.write(str(mean_tokens)+" "+str(mean_terms)+"\t\n")
+			static.write(str(len_mean_terms)+"\t\n")
+			static.write(str(min_document_len_terms)+"\t"+str(min_document_len_tokens)+"\t\n")
+			static.write(str(max_document_len_terms)+"\t"+str(max_document_len_tokens)+"\t\n")
+			static.write(str(count_terms__onece)+"\t\n")
+			
 
 if __name__ == "__main__":
    main(sys.argv[1:])
