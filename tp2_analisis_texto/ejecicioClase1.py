@@ -4,7 +4,10 @@ import getopt
 from os import listdir
 from os.path import isdir
 import modulos.dictionary as dictionary
-from modulos.tokenizer import tokenizar
+from modulos.tokenizer import *
+from modulos.tokenizer import get_abreviaturas
+from modulos.tokenizer import get_numero
+
 import collections
 
 
@@ -52,7 +55,7 @@ def main(argv):
 			empty = False
 		elif opt in("-o"):
 			output = arg
-
+#variables usadas
 	word_count = 0
 	word_dic = {}
 	vacias = []
@@ -74,7 +77,13 @@ def main(argv):
 	count_terms__onece=0
 
 	filex=0
-	
+
+	abreviaturas_r = []
+	email_r =[]
+	numeros_r = []
+	Nombres_r =[]
+	url_r=[]
+
 	if isdir(dirname):
 		files = listdir(dirname)
 		outputFile = open(output+".txt",'w')
@@ -85,12 +94,19 @@ def main(argv):
 			file_count +=1
 			lines = open(dirname+'/'+fileI,'r',encoding="ISO-8859-1").readlines()
 			tokens = tokenizar(lines)
+			#tokens = tokenizar_abreviaturas(lines)
 
+	
 			if not empty:
 				vacias = dictionary.get_vacias(list_empty)
 				#vacias = dictionary.get_vacias("extras/vacias.txt")
-				print("casa")
 				tokens = dictionary.sacar_palabras_vacias(tokens,vacias)
+			
+			numeros_r.append(get_numero(lines))
+			abreviaturas_r.append(get_abreviaturas(lines))
+			email_r.append(get_mail(lines))
+			Nombres_r.append(get_nombres(lines))
+			url_r.append(get_url(lines))
 			for token in tokens:	
 				tokens_count +=1
 				
