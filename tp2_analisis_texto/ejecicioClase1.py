@@ -85,6 +85,8 @@ def main(argv):
 	url_r=[]
 
 	if isdir(dirname):
+		if not empty:
+				stop_words=open(list_empty,'r').read()	
 		files = listdir(dirname)
 		outputFile = open(output+".txt",'w')
 		for fileI in files:
@@ -93,23 +95,23 @@ def main(argv):
 			tokens = []
 			file_count +=1
 			lines = open(dirname+'/'+fileI,'r',encoding="ISO-8859-1").readlines()
+			numeros_r.extend(get_numero(lines))
+			abreviaturas_r.extend(get_abreviaturas(lines))
+			email_r.extend(get_mail(lines))
+			Nombres_r.extend(get_nombres(lines))
+			url_r.extend(get_url(lines))
 			tokens = tokenizar(lines)
 			#tokens = tokenizar_abreviaturas(lines)
 
 	
 			if not empty:
-				vacias = dictionary.get_vacias(list_empty)
+				vacias = dictionary.get_vacias(stop_words)
 				#vacias = dictionary.get_vacias("extras/vacias.txt")
 				tokens = dictionary.sacar_palabras_vacias(tokens,vacias)
 			
-			numeros_r.append(get_numero(lines))
-			abreviaturas_r.append(get_abreviaturas(lines))
-			email_r.append(get_mail(lines))
-			Nombres_r.append(get_nombres(lines))
-			url_r.append(get_url(lines))
+			
 			for token in tokens:	
 				tokens_count +=1
-				
 				if(token in word_dic):
 					cf,df = word_dic[token]
 					if (token in file_tokens):
@@ -157,6 +159,9 @@ def main(argv):
 		print(str(max_document_len_terms)+"\t"+str(max_document_len_tokens))
 		print(count_terms__onece)
 
+		#regex
+		
+
 		with open(estadistica,"w") as static:
 			static.write(str(file_count)+"\t\n")
 			static.write(str(tokens_count)+" "+str(terminos_count)+"\t\n")
@@ -179,6 +184,12 @@ def main(argv):
 				cf,df = word_dic[token]
 				frecuecia_file.write(str(token)+"\t"+str(cf)+"\n")
 				print(str(token)+"\t"+str(cf)+"\n")			
+		
+		print(Nombres_r)
+		print(email_r)
+		print(url_r)
+		print(abreviaturas_r)
+
 
 if __name__ == "__main__":
    main(sys.argv[1:])

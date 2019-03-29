@@ -12,9 +12,8 @@ def sacar_palabras_vacias(lista_tokens,lista_vacias):
 
 def get_vacias(file):
 	emptys = []
-	lines = open(file,"r").readline()
-	for line in lines:
-		words = lines.split(", ")
+	for line in file:
+		words = line.split(", ")
 		for word in words:
 			emptys.append(str(word))	
 	return emptys
