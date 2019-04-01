@@ -1,0 +1,13 @@
+/apuntes
+/colecciones
+/python
+data/
+Resultados/
+RI-tknz-data/
+*.tar
+*.tar.gz
+*.ipynb
+*.pdf
+*.pyc
+coleccion_2018_final/
+RI-tknz-qm/
