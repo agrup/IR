@@ -3,6 +3,8 @@
  -d path to source directory <origen> 
  -n without empty words 
  -o output file name 
+ -q chimical tokenizer
+ -s stemer 
 
 
 Moverse entre ejercicios
@@ -21,3 +23,8 @@ ej2 b)
 ---
 
 git checkout ej1-b
+
+ej3 
+---
+
+git checkout ej3

@@ -15,14 +15,25 @@ def help():
 	print("pareserIR")
 	print(" -d path to source directory <origen>")
 	print(" -n without empty words")
+	print(" -q chemical tokenizer")
+	print(" -s stemer SnowballStemer")
+	print(" -p stemer Porter")
+	print(" -l stemer Lancaster")
+
+
 	#print(" -o output file name")
 
 
 def main(argv):
 	dirname = ""
 	empty = True
+	quimic = False
+	default = True
+	stemer = False
+	porter = False
+	lancaster = False
 	output = "terminos"
-	list_empty="extras/vacias.txt"
+	list_empty="extras/vacias2.txt"
 	estadistica="estadisticas.txt"
 	frecuencia="frecuencias.txt"
 
@@ -36,7 +47,7 @@ def main(argv):
 		# print(" -o output file name")
 		exit()
 	try:
-		opts, args= getopt.getopt(argv,"hd:no:")
+		opts, args= getopt.getopt(argv,"hd:no:qslp")
 	except getopt.GetoptError:
 		help()
 		sys.exit(2)
@@ -44,10 +55,6 @@ def main(argv):
 	for opt, arg in opts:
 		if opt=='-h':
 			help()
-			# print("pareserIR")
-			# print(" -d path to source directory <origen>")
-			# print(" -n without empty words")
-			# print(" -o output file name")
 			exit()
 		elif opt in ("-d"):
 			dirname = arg
@@ -55,6 +62,30 @@ def main(argv):
 			empty = False
 		elif opt in("-o"):
 			output = arg
+		elif opt in ("-q"):
+			default = False
+			chemical = True
+			stemer = False
+			stemer = False			
+			lancaster = False
+		elif opt in ("-s"):
+			default = False
+			chemical = False
+			stemer = True			
+			lancaster = False			
+			porter = False
+		elif opt in ("-p"):
+			default = False
+			chemical = False
+			stemer = False
+			lancaster = False
+			porter = True			
+		elif opt in ("-l"):
+			default = False
+			chemical = False
+			stemer = False
+			lancaster = True
+			porter = False
 #variables usadas
 	word_count = 0
 	word_dic = {}
@@ -86,7 +117,7 @@ def main(argv):
 
 	if isdir(dirname):
 		if not empty:
-				stop_words=open(list_empty,'r').read()	
+			stop_words=open(list_empty,'r').read()
 		files = listdir(dirname)
 		outputFile = open(output+".txt",'w')
 		for fileI in files:
@@ -94,20 +125,32 @@ def main(argv):
 			file_tokens =[]
 			tokens = []
 			file_count +=1
-			lines = open(dirname+'/'+fileI,'r',encoding="ISO-8859-1").readlines()
+			lines = open(dirname+'/'+fileI,'r',errors = 'ignore').readlines()
 			numeros_r.extend(get_numero(lines))
 			abreviaturas_r.extend(get_abreviaturas(lines))
 			email_r.extend(get_mail(lines))
-			Nombres_r.extend(get_nombres(lines))
+			Nombres_r.extend(get_nombres_propios(lines))
 			url_r.extend(get_url(lines))
-			tokens = tokenizar(lines)
+			if (default):
+				tokens = tokenizar(lines)
+			elif (chemical):
+				print("tokenizando quimica")
+				tokens = tokenizar_quimica(lines)
+			elif (stemer):
+				print("stemear")
+				tokens= tokenizar_stemer_sb(lines)
+			elif (lancaster):
+				tokens = tokenizar_lancaster(lines)
+			elif (porter):
+				tokens = tokenizar_porter(lines)
+			#tokens = tokenizar_stemer(lines)
 			#tokens = tokenizar_abreviaturas(lines)
 
 	
 			if not empty:
-				vacias = dictionary.get_vacias(stop_words)
+
 				#vacias = dictionary.get_vacias("extras/vacias.txt")
-				tokens = dictionary.sacar_palabras_vacias(tokens,vacias)
+				tokens = dictionary.sacar_palabras_vacias(tokens,stop_words)
 			
 			
 			for token in tokens:	
@@ -185,10 +228,11 @@ def main(argv):
 				frecuecia_file.write(str(token)+"\t"+str(cf)+"\n")
 				print(str(token)+"\t"+str(cf)+"\n")			
 		
+		print(abreviaturas_r)
 		print(Nombres_r)
 		print(email_r)
 		print(url_r)
-		print(abreviaturas_r)
+		
 
 
 if __name__ == "__main__":
