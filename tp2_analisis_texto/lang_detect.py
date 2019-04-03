@@ -267,7 +267,7 @@ def main(argv):
 					for line in filesol:
 						l = line.split()
 						solutions.append(l[1])
-					print(solutions)
+					# print(solutions)
 					
 					sum_acert=0
 					for sol in resultado:
@@ -280,7 +280,7 @@ def main(argv):
 						# print(solutions[i][0:2].lower())
 						# print(results[i])
 						if (langdetec):
-							print(results[i],solutions[i][0:2].lower())
+							# print(results[i],solutions[i][0:2].lower())
 							if(results[i]==solutions[i][0:2].lower()):
 								sum_acert +=1
 								
