@@ -7,6 +7,7 @@ import json
 import os
 import numpy
 import time
+from langdetect import detect
 
 
 
@@ -116,6 +117,8 @@ def help():
 def main(argv):
 	dirname = ""
 	training = False
+	langdetec=False
+	bigrams_flag=False
 	output = "lang/"
 	unigrams_flag=True
 	testFile="languageIdentificationData/solution"
@@ -126,7 +129,7 @@ def main(argv):
 		help()
 		exit()
 	try:
-		opts, args= getopt.getopt(argv,"hd:ubt")
+		opts, args= getopt.getopt(argv,"hd:ubtl")
 	except getopt.GetoptError:
 		help()
 		sys.exit(2)
@@ -140,8 +143,14 @@ def main(argv):
 		elif opt in ("-t"):
 			training = True
 		elif opt in ("-b"):
+			bigrams_flag=True
+			langdetec=False
 			unigrams_flag=False
-			
+		elif opt in ("-l"):
+			unigrams_flag=False
+			bigrams_flag=False
+			langdetec=True
+
 	
 	if not os.path.exists(output):
 		os.makedirs(output)
@@ -176,8 +185,9 @@ def main(argv):
 				token = tokenizar(lines)
 				if(unigrams_flag):
 					unigrams.extend(get_unigramas(token))
-				else:
+				elif(bigrams_flag):
 					unigrams.extend(get_bigrams(token))
+				
 				
 				#loop to add unigrams to dictionary
 				if(training):
@@ -223,23 +233,29 @@ def main(argv):
 				token = tokenizar_l(line)
 				if(unigrams_flag):
 					unigrams.extend(get_unigramas(token))
-				else:
+				elif(bigrams_flag):
 					unigrams.extend(get_bigrams(token))
-			
 
+
+				if not langdetec:
 				
-				unigrams_dic = unigrams_to_dic(unigrams)
-				dics_test[file]=(unigrams_dic)
-				jsonlengs=get_lengs(output+"training.json")
-				result=lang_detect(jsonlengs,unigrams_dic)
-				# print(line)
-				resultado.append(result)
-				# print(result)
+					unigrams_dic = unigrams_to_dic(unigrams)
+					dics_test[file]=(unigrams_dic)
+					jsonlengs=get_lengs(output+"training.json")
+					result=lang_detect(jsonlengs,unigrams_dic)
+					# print(line)
+					resultado.append(result)
+					# print(result)
+				else:
+					resultado.append((detect(line),1))
+					# print(detect(line))
+					# print(resultado)
+				
 				
 			if not(training):
 				with open("resultado.txt",'w') as result:
 					for r ,v in resultado:
-						#print(r)
+						# print(r)
 						result.write(str(r)+"\n")
 				
 				with open(testFile,'r') as filesolution:
@@ -247,23 +263,29 @@ def main(argv):
 					results =[]
 					filesol = filesolution.readlines()
 					total = len(filesol)
+
 					for line in filesol:
 						l = line.split()
 						solutions.append(l[1])
-
-					#print(tf.read())
+					print(solutions)
 					
 					sum_acert=0
 					for sol in resultado:
 						lengua, count = sol
-						
-						#print(lengua)
 						results.append(lengua)
-						#print(resultado)
+					# print(results)
 					
 					for i in range(total):
-						if(results[i]==solutions[i]):
-							sum_acert +=1
+
+						# print(solutions[i][0:2].lower())
+						# print(results[i])
+						if (langdetec):
+							print(results[i],solutions[i][0:2].lower())
+							if(results[i]==solutions[i][0:2].lower()):
+								sum_acert +=1
+								
+						elif(results[i]==solutions[i]):
+								sum_acert +=1
 					print("acierto")
 					print(sum_acert/total)
 
