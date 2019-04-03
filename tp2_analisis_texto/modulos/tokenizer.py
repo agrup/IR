@@ -6,7 +6,7 @@ from nltk.stem import PorterStemmer
 from nltk.stem.lancaster import LancasterStemmer
 
 LEN_CHIMIST=2
-MIN_TOKEN = 2
+MIN_TOKEN = 0
 MAX_TOKEN = 20
 numero_regex = r"^([0-9]+[,])*[0-9]([.][0-9]+)?"
 #numero_regex = r"(?<![a-zA-Z])\d+((\.|,)\d+)?(?![a-zA-Z])"
@@ -18,11 +18,26 @@ mail_regex=r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+"
 url_regex=r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
 nombre_regex=r'[A-Z][a-z]+ [A-Z][a-z]*'
 
+def tokenizar_l(lines):
+    tokens = []
+    lines = lines.split()
+    for line in lines:
+     
+        line = re.sub(r'[^a-zA-Z]', ' ', line)
+        #line = re.sub(r'[A-Z][a-z]?\d*|\(.*?\)\d+', ' ', line)
+        words = line.split()
+                
+        for word in words:
+            if not (len(word) < MIN_TOKEN or len(word) > MAX_TOKEN):
+                word = word.lower()
+                tokens.append(word)
+    return tokens
 def tokenizar(lines):
     tokens = []
 
     for line in lines:
-        line = re.sub(r'[^a-zA-Z0-9]', ' ', line)
+
+        line = re.sub(r'[^a-zA-Z]', ' ', line)
         #line = re.sub(r'[A-Z][a-z]?\d*|\(.*?\)\d+', ' ', line)
         words = line.split()
         for word in words:

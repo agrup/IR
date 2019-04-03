@@ -5,8 +5,7 @@ from os import listdir
 from os.path import isdir
 import modulos.dictionary as dictionary
 from modulos.tokenizer import *
-from modulos.tokenizer import get_abreviaturas
-from modulos.tokenizer import get_numero
+
 
 import collections
 

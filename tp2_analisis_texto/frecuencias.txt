@@ -1,0 +1,21 @@
+de	263109
+la	212238
+y	162741
+que	144708
+a	124571
+el	119927
+en	111470
+lo	101072
+se	74436
+n	64063
+
+puon	1
+aramidem	1
+caano	1
+napatacman	1
+nalmeng	1
+lipatan	1
+ulidanmo	1
+disso	1
+aniaman	1
+casasaadmo	1
