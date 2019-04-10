@@ -17,12 +17,16 @@ ejercicios
 ej1 a)
 ------
 
-git checkout ej1-pa
+	#Con palabras vacias
+	python3 analisis_texto.py -d “path/al/directorio/con/coleccion”  
+
+	#Sin palabras vacias 
+	python3 analisis_texto.py -d “path/al/directorio/con/coleccion”  -n
+
 
 ej2 b)
 ---
 
-git checkout ej1-b
 
 ej3 
 ---

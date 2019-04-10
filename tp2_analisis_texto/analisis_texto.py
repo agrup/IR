@@ -161,6 +161,7 @@ def main(argv):
 					else:
 						file_tokens.append(token)
 						len_terms += len(token)
+						
 						word_dic[token] = cf+1, df+1
 				else:
 					word_dic[token]=1,1
@@ -206,8 +207,8 @@ def main(argv):
 
 		with open(estadistica,"w") as static:
 			static.write(str(file_count)+"\t\n")
-			static.write(str(tokens_count)+" "+str(terminos_count)+"\t\n")
-			static.write(str(mean_tokens)+" "+str(mean_terms)+"\t\n")
+			static.write(str(tokens_count)+"\t"+str(terminos_count)+"\t\n")
+			static.write(str(mean_tokens)+"\t means: "+str(mean_terms)+"\t\n")
 			static.write(str(len_mean_terms)+"\t\n")
 			static.write(str(min_document_len_terms)+"\t"+str(min_document_len_tokens)+"\t\n")
 			static.write(str(max_document_len_terms)+"\t"+str(max_document_len_tokens)+"\t\n")

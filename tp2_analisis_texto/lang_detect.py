@@ -109,7 +109,7 @@ def help():
 	print(" -u unigrama default")
 	print(" -b bigrama ")
 	print(" -t train use file name for the lenguaje")
-
+	print(" -l langdetect from detect")
 
 
 	#print(" -o output file name")
