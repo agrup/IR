@@ -53,15 +53,7 @@ def tokenizar_quimica(lines):
         words = line.split()
         for word in words:
             tokens.append(word)
-            # if len(word) > LEN_CHIMIST:
-            #     #word = word.lower()
-            #     tokens.append(word)
-            # else:
- 
-            #     word = re.sub(r'[^A-Za-z]','',word)
-            #     if word:
-            #         word = word.lower()
-            #         tokens.append(word)
+     tokens.append(word)
  
     return tokens  
 

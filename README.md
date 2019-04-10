@@ -24,11 +24,3 @@ ej1 a)
 	python3 analisis_texto.py -d “path/al/directorio/con/coleccion”  -n
 
 
-ej2 b)
----
-
-
-ej3 
----
-
-git checkout ej3
