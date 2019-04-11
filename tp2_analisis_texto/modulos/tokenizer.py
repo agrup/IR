@@ -53,7 +53,7 @@ def tokenizar_quimica(lines):
         words = line.split()
         for word in words:
             tokens.append(word)
-     tokens.append(word)
+            #tokens.append(word)
  
     return tokens  
 
