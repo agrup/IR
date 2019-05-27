@@ -6,6 +6,8 @@ import math
 import itertools
 import numpy as np
 import sys
+import matplotlib.pyplot as plt
+import operator
 
 #dirname = "/home/agu/Unlu/IR/tp5_estructura_de_datos/data"
 dirname="/home/agu/Unlu/IR/colecciones/RI-tknz-data"
@@ -34,15 +36,12 @@ def indexer(dirname):
         vocabulary={}
         document_vector={}
         id_voc=0
-        #vocavulary_result=[]
-        #docs_count=len(files)
         posting={}
         doc_id=0
         pt=0
         size_dirname=0
         size_disk=0
         for file in files:
-            size_disk+=os.path.getsize(dirname+'/'+file)
             with open(dirname+'/'+file,'r',errors = 'ignore') as file_aux:
                 lines = file_aux.readlines()
                 size_dirname+=sys.getsizeof(file_aux)
@@ -67,7 +66,6 @@ def indexer(dirname):
             
             doc_id+=1
         voc_id=[]
-        #for termn in vocabulary.items():
         pt=0
         for term in sorted(vocabulary.keys()):
             df=vocabulary[term]
@@ -76,45 +74,63 @@ def indexer(dirname):
         #print(size_dirname)
         return (voc_id,posting,size_dirname,size_disk)
 
+def plot_bar(values,label):
+    index= np.arange(len(label))
+    plt.bar(index,values)
+    plt.xticks(index, label, fontsize=10, rotation=30)
+    plt.show()
 
 vocs,posting,size_dirname,size_disk = (indexer(dirname))
-#print(vocs)
-#print(int(os.path.getsize("index.bin")/FORMAT_SIZE))
+
+
 with open("index.bin","wb") as index:
     for term, value,pt in vocs:
         index.write(binary_pack(posting[term]))
 
 
 
-#TODO tengo que agregar los punteros en el vocabulario y luego poder recuperar los posting
 len_data=len(binary_pack([1]))
-#print(len_data)
 size = int(os.path.getsize("index.bin")/len_data)
-#print(os.path.getsize(dirname)-os.path.getsize("index.bin")-sys.getsizeof(vocs))
-#size_obj_index=0
 with open("voc.txt","w") as voc:
     for term, value,pt in vocs:
         voc.write(str(term)+" "+str(value)+" "+str(pt)+"\n")
-#size_obj_index=os.path.getsize("voc.txt")
 
 with open("index.bin","rb") as index:
     size_obj_index=sys.getsizeof(index)
     tuple_index =binary_unpack(index,FORMAT_STRUCT.format(size))
     tuple_array = np.array(tuple_index)
-
+    terms=[]
     for term, value,pt in vocs:
         index.seek(pt)
         docus=index.read(value*len_data)
         postin=struct.unpack(FORMAT_STRUCT.format(value),docus)
-        #print(term,np.array(postin))
 
-print(os.path.getsize(dirname))
-print("directori size",size_dirname,size_disk)
-print("directori posting",size_obj_index,os.path.getsize("index.bin"))
-print("directori index",sys.getsizeof(vocs),os.path.getsize("voc.txt"))
-print("result",os.path.getsize("index.bin")+os.path.getsize("voc.txt")-size_disk)
-print("result",size_obj_index+sys.getsizeof(vocs)-size_dirname)
+   
+
+# print(os.path.getsize(dirname))
+
+print("directory size",os.path.getsize(dirname))
+print("directory posting",os.path.getsize("index.bin"))
+print("directory index",os.path.getsize("voc.txt"))
+print("---------------------------------------------")
+print("overhead",(os.path.getsize("index.bin")-os.path.getsize("voc.txt")-os.path.getsize(dirname))/os.path.getsize("index.bin"),"%")
+#print("result",size_obj_index+sys.getsizeof(vocs)-os.path.getsize(dirname))
 #print(vocs)
 
-    
 
+vocs.sort(key=operator.itemgetter(1))
+distribution={}
+befor_df=vocs[0][1]
+aux=0
+#print(befor_df)
+for _,df,_ in vocs:
+    if befor_df==df:
+        aux+=1
+    else:
+        distribution[befor_df]=aux
+        aux=1
+        befor_df=df
+#print(distribution)
+# print(vocs)
+
+plot_bar(distribution.values(),distribution.keys())
