@@ -113,7 +113,7 @@ print("directory size",os.path.getsize(dirname))
 print("directory posting",os.path.getsize("index.bin"))
 print("directory index",os.path.getsize("voc.txt"))
 print("---------------------------------------------")
-print("overhead",(os.path.getsize("index.bin")-os.path.getsize("voc.txt")-os.path.getsize(dirname))/os.path.getsize("index.bin"),"%")
+print("overhead",((os.path.getsize("index.bin")-os.path.getsize("voc.txt")-os.path.getsize(dirname))/os.path.getsize("index.bin"))/os.path.getsize("index.bin"),"%")
 #print("result",size_obj_index+sys.getsizeof(vocs)-os.path.getsize(dirname))
 #print(vocs)
 
