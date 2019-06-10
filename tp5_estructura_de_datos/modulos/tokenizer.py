@@ -29,11 +29,12 @@ def tokenizar_l(lines):
                 word = word.lower()
                 tokens.append(word)
     return tokens
+
 def tokenizar(lines):
     tokens = []
-
+    
     for line in lines:
-
+        # print(line)    
         line = re.sub(r'[^a-zA-Z]', ' ', line)
         #line = re.sub(r'[A-Z][a-z]?\d*|\(.*?\)\d+', ' ', line)
         words = line.split()

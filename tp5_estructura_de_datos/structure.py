@@ -9,14 +9,8 @@ import sys
 import matplotlib.pyplot as plt
 import operator
 
-#dirname = "/home/agu/Unlu/IR/tp5_estructura_de_datos/data"
-dirname="/home/agu/Unlu/IR/colecciones/RI-tknz-data"
 
-FORMAT_STRUCT="{}I"
-FORMAT_SIZE=4
-#size_dirname=0
-
-def binary_pack(list):
+def binary_pack(list,FORMAT_STRUCT):
     s_format=FORMAT_STRUCT.format(len(list))
     return (struct.pack(s_format,*list))
     
@@ -71,8 +65,7 @@ def indexer(dirname):
             df=vocabulary[term]
             voc_id.append((term,df[1],pt))
             pt+=df[1]*4
-        #print(size_dirname)
-        return (voc_id,posting,size_dirname,size_disk)
+        return (voc_id,posting)
 
 def plot_bar(values,label):
     index= np.arange(len(label))
@@ -80,57 +73,81 @@ def plot_bar(values,label):
     plt.xticks(index, label, fontsize=10, rotation=30)
     plt.show()
 
-vocs,posting,size_dirname,size_disk = (indexer(dirname))
 
 
-with open("index.bin","wb") as index:
-    for term, value,pt in vocs:
-        index.write(binary_pack(posting[term]))
+def save_posting(vocs,posting,path,FORMAT_STRUCT):
+    with open(path,"wb") as index:
+        for term, value,pt in vocs:
+            index.write(binary_pack(posting[term],FORMAT_STRUCT))
+
+
+def save_voc(vocs,path):
+    with open(path,"w") as voc:
+        for index,(term, value,pt) in enumerate(vocs):
+            voc.write(str(index)+" "+str(term)+" "+str(value)+" "+str(pt)+"\n")
+
+# with open("voc.txt","w") as voc:
+#     for term, value,pt in vocs:
+#         voc.write(str(term)+" "+str(value)+" "+str(pt)+"\n")
+
+
+# with open("index.bin","rb") as index:
+#     size_obj_index=sys.getsizeof(index)
+#     tuple_index =binary_unpack(index,FORMAT_STRUCT.format(size))
+#     tuple_array = np.array(tuple_index)
+#     terms=[]
+#     for term, value,pt in vocs:
+#         index.seek(pt)
+#         docus=index.read(value*len_data)
+#         postin=struct.unpack(FORMAT_STRUCT.format(value),docus)
 
 
 
-len_data=len(binary_pack([1]))
-size = int(os.path.getsize("index.bin")/len_data)
-with open("voc.txt","w") as voc:
-    for term, value,pt in vocs:
-        voc.write(str(term)+" "+str(value)+" "+str(pt)+"\n")
-
-with open("index.bin","rb") as index:
-    size_obj_index=sys.getsizeof(index)
-    tuple_index =binary_unpack(index,FORMAT_STRUCT.format(size))
-    tuple_array = np.array(tuple_index)
-    terms=[]
-    for term, value,pt in vocs:
-        index.seek(pt)
-        docus=index.read(value*len_data)
-        postin=struct.unpack(FORMAT_STRUCT.format(value),docus)
-
-   
-
-# print(os.path.getsize(dirname))
-
-print("directory size",os.path.getsize(dirname))
-print("directory posting",os.path.getsize("index.bin"))
-print("directory index",os.path.getsize("voc.txt"))
-print("---------------------------------------------")
-print("overhead",((os.path.getsize("index.bin")-os.path.getsize("voc.txt")-os.path.getsize(dirname))/os.path.getsize("index.bin"))/os.path.getsize("index.bin"),"%")
-#print("result",size_obj_index+sys.getsizeof(vocs)-os.path.getsize(dirname))
-#print(vocs)
+# ###main
+# vocs,posting = (indexer(dirname))
+# save_index(vocs,posting,"index.bin")
+# len_data=len(binary_pack([1]))
+# size = int(os.path.getsize("index.bin")/len_data)   
+# save_voc(vocs,"voc.txt")
 
 
-vocs.sort(key=operator.itemgetter(1))
-distribution={}
-befor_df=vocs[0][1]
-aux=0
-#print(befor_df)
-for _,df,_ in vocs:
-    if befor_df==df:
-        aux+=1
-    else:
-        distribution[befor_df]=aux
-        aux=1
-        befor_df=df
-#print(distribution)
-# print(vocs)
+# with open("index.bin","rb") as index:
+#     size_obj_index=sys.getsizeof(index)
+#     tuple_index =binary_unpack(index,FORMAT_STRUCT.format(size))
+#     tuple_array = np.array(tuple_index)
+#     terms=[]
+#     for term, value,pt in vocs:
+#         index.seek(pt)
+#         docus=index.read(value*len_data)
+#         postin=struct.unpack(FORMAT_STRUCT.format(value),docus)
 
-plot_bar(distribution.values(),distribution.keys())
+
+
+
+# # print(os.path.getsize(dirname))
+
+# print("directory size",os.path.getsize(dirname))
+# print("directory posting",os.path.getsize("index.bin"))
+# print("directory index",os.path.getsize("voc.txt"))
+# print("---------------------------------------------")
+# print("overhead",((os.path.getsize("index.bin")-os.path.getsize("voc.txt")-os.path.getsize(dirname))/os.path.getsize("index.bin"))/os.path.getsize("index.bin"),"%")
+# #print("result",size_obj_index+sys.getsizeof(vocs)-os.path.getsize(dirname))
+# #print(vocs)
+
+
+# vocs.sort(key=operator.itemgetter(1))
+# distribution={}
+# befor_df=vocs[0][1]
+# aux=0
+# #print(befor_df)
+# for _,df,_ in vocs:
+#     if befor_df==df:
+#         aux+=1
+#     else:
+#         distribution[befor_df]=aux
+#         aux=1
+#         befor_df=df
+# #print(distribution)
+# # print(vocs)
+
+# plot_bar(distribution.values(),distribution.keys())
