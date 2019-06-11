@@ -21,13 +21,27 @@ with open(voc_file) as vocabulary:
         vocs.append(term)
         vocs_id[term[1]]=(term[2],term[3])
 
-query = "aa OR zool "
-
-# tokens = tokenizar(query.split())
-
-# print("tt",query)
+# Primer consulta de prueba
+query = "aa OR zool OR zoom"
 query =token_query(query)
-# print(query2,"3333333")
-# print(str(query))
 
-find(query,vocs_id,FORMAT_STRUCT)
+
+find(query,vocs_id,FORMAT_STRUCT,postin_file)
+
+# Segunda consulta
+query = "aa OR zool AND NOT zoom"
+
+
+query =token_query(query)
+find(query,vocs_id,FORMAT_STRUCT,postin_file)
+
+# Tercera query
+query = "aa AND NOT zool AND zoom"
+
+
+query =token_query(query)
+find(query,vocs_id,FORMAT_STRUCT,postin_file)
+
+
+
+

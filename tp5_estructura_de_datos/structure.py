@@ -8,6 +8,16 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 import operator
+from typing import List
+from os.path import isdir
+def get_files(path):
+
+    if not isdir(path):
+        return [path]  # its expected to return a list each time even if its a single element
+    return [file for fileOrDir in listdir(path) for file in get_files(path + '/' + fileOrDir)]
+    # return list of each file returned by the recursive call getFiles(fileOrDir) on
+    # each fileOrDir in listdir(path)
+
 
 
 def binary_pack(list,FORMAT_STRUCT):
@@ -26,7 +36,8 @@ def calc_idf(corpus_count,doc_freq):
     return 0
 
 def indexer(dirname):
-        files = listdir(dirname)
+        # files = listdir(dirname)
+        files = get_files(dirname)
         vocabulary={}
         document_vector={}
         id_voc=0
@@ -36,7 +47,7 @@ def indexer(dirname):
         size_dirname=0
         size_disk=0
         for file in files:
-            with open(dirname+'/'+file,'r',errors = 'ignore') as file_aux:
+            with open(file,errors = 'ignore') as file_aux:
                 lines = file_aux.readlines()
                 size_dirname+=sys.getsizeof(file_aux)
 
