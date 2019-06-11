@@ -78,17 +78,19 @@ def taat_memory(query,Indice,FORMAT_STRUCT,postin_list):
     heapq.heapify(Heap)
 
     # postings.append(getPostings(query,Indice,FORMAT_STRUCT,postin_list))
-    
-    for posting in postin_list.items():
-        for doc_id in posting:
-            if doc_id in document_acum.keys():
-                document_acum[str(doc_id)]+=Ranking_funtion()
-            else:
-                document_acum[str(doc_id)]=Ranking_funtion()
+    if query in postin_list:
+        for posting in postin_list[query]:
+            for doc_id in [posting]:
+                if doc_id in document_acum.keys():
+                    document_acum[str(doc_id)]+=Ranking_funtion()
+                else:
+                    document_acum[str(doc_id)]=Ranking_funtion()
 
-    for term,acum in document_acum.items():
-        heapq.heappush(Heap,(acum,term))
-    return heapsort(Heap)
+        for term,acum in document_acum.items():
+            heapq.heappush(Heap,(acum,term))
+        return heapsort(Heap)
+    else:
+        return heapsort(Heap)
 
 
 # vocs,posting = (indexer(dirname))

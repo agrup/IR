@@ -69,7 +69,6 @@ start = time.time()
 
 for query_array in two_terms_querys:
     query=str(query_array[0])+" AND "+str(query_array[1])    
-    print(query,"q")
 
     # print(query)
     query =token_query(query)
