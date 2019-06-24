@@ -16,11 +16,6 @@ query_file="/home/agu/Unlu/IR/colecciones/wiki/queries_2y3t.txt"
 
 dirname="/home/agu/Unlu/IR/colecciones/wiki/en/"
 
-# vocs,posting = (indexer(dirname))
-# save_posting(vocs,posting,postin_file,FORMAT_STRUCT)
-# len_data=len(binary_pack([1],FORMAT_STRUCT))
-# size = int(os.path.getsize(postin_file)/len_data)   
-# save_voc(vocs,voc_file)
 
 
 len_data=len(binary_pack([1],FORMAT_STRUCT))
@@ -44,7 +39,9 @@ with open(postin_file,"rb") as index:
     for term, (value,pt) in vocs_id.items():
         index.seek(int(pt))
         docus=index.read(int(value)*len_data)
+        
         postin=struct.unpack(FORMAT_STRUCT.format(value),docus)
+        
         posting_dic[term]=postin
 # print(tuple_array)
 
@@ -78,7 +75,7 @@ for query_array in two_terms_querys:
     query =token_query(query)
     find_memory(query,vocs_id,FORMAT_STRUCT,posting_dic)
     # Tercera query
-    query=str(query_array[0])+" AND NOT "+str(query_array[1])
+    query="NOT "+str(query_array[0])+" AND NOT "+str(query_array[1])
     query =token_query(query)
     find_memory(query,vocs_id,FORMAT_STRUCT,posting_dic)
 

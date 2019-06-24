@@ -10,6 +10,14 @@ import matplotlib.pyplot as plt
 import operator
 from typing import List
 from os.path import isdir
+import time
+
+FORMAT_STRUCT="{}I"
+FORMAT_SIZE=4
+posting_file="posting_temp.bin"
+voc_file="voc_temp.txt"
+
+
 def get_files(path):
 
     if not isdir(path):
@@ -35,6 +43,68 @@ def calc_idf(corpus_count,doc_freq):
         return math.log(corpus_count/doc_freq,2)
     return 0
 
+def indexer_limit(dirname,limit):
+        # files = listdir(dirname)
+        
+
+        files = get_files(dirname)
+        vocabulary={}
+        document_vector={}
+        id_voc=0
+        posting={}
+        doc_id=0
+        pt=0
+        size_dirname=0
+        size_disk=0
+
+        memory_used= 0
+
+        for file in files:
+            with open(file,errors = 'ignore') as file_aux:
+                lines = file_aux.readlines()
+                file_size= sys.getsizeof(file_aux)
+                size_dirname+=sys.getsizeof(file_aux)
+            print(limit-memory_used,limit,memory_used,file_size)
+            time.sleep(1)
+            if ((memory_used+file_size)>limit):
+
+                marge_posting(posting_file,voc_file,vocabulary,posting)
+                memory_used=0
+                vocabulary={}
+                posting={}
+            else:
+                memory_used+=file_size
+            
+            docu_voc=[]
+            tokens=tokenizar(lines)
+            for token in tokens:
+                if token not in vocabulary:
+                    print(token)
+                    vocabulary[token]=(id_voc,1)
+                    docu_voc.append(id_voc)
+                    posting[token]=[doc_id]
+                    id_voc =id_voc+1
+                else:
+                    id,doc_freq = vocabulary[token]
+                    if id not in docu_voc:
+                        doc_freq = doc_freq+1
+                        docu_voc.append(id)
+                        posting[token].append(doc_id)
+                    vocabulary[token]=(id,doc_freq)
+                    pt+=doc_freq
+            document_vector[file]=docu_voc
+            
+            doc_id+=1
+        # voc_id=[]
+        # pt=0
+        # for term in sorted(vocabulary.keys()):
+        #     df=vocabulary[term]
+        #     voc_id.append((term,df[1],pt))
+        #     pt+=df[1]*4
+        # return (voc_id,posting)
+        #marge_posting(posting_file,voc_file,vocabulary,posting)
+        return(posting_file)
+
 def indexer(dirname):
         # files = listdir(dirname)
         files = get_files(dirname)
@@ -50,7 +120,7 @@ def indexer(dirname):
             with open(file,errors = 'ignore') as file_aux:
                 lines = file_aux.readlines()
                 size_dirname+=sys.getsizeof(file_aux)
-
+            
             docu_voc=[]
             tokens=tokenizar(lines)
             for token in tokens:
@@ -78,13 +148,94 @@ def indexer(dirname):
             pt+=df[1]*4
         return (voc_id,posting)
 
+def marge_posting(file_posting,voc_file,vocabulary,posting):
+    print("merge")
+    
+
+    len_data=len(binary_pack([1],FORMAT_STRUCT))
+    # size = int(os.path.getsize(file_posting)/len_data) 
+    #new_terms = read_voc(voc_file)
+    if (os.path.isfile(file_posting)):
+        print("old posting exist")
+        new_posting={}
+        voc_id=[]
+        pt=0
+        old_voc = read_voc(voc_file)
+        for term in vocabulary.keys():
+            #new_id ,new_df=vocabulary[term]
+
+            if term in old_voc.keys():
+                
+                old_df,old_pt = old_voc[term] 
+                
+                with open(file_posting,"rb") as index:
+                    index.seek(int(old_pt))
+                    bin_old_posting = index.read(int(old_df)*len_data)
+                    print(int(old_df),len_data,term,old_pt)
+
+                    old_posting = struct.unpack(FORMAT_STRUCT.format(int(old_df)),bin_old_posting)
+                    print(old_posting,"old posting")
+                    new_posting[term]=list(old_posting)
+                new_df = int(old_df)
+                for postin in posting[term]:
+                    if postin not in new_posting[term]:     
+                        print(postin,"casa",new_posting[term])
+                        new_posting[term].append(postin)
+                        
+                        new_df+=1
+
+                #new_df += int(old_df)
+                
+                voc_id.append((term,new_df,pt))
+                pt+=int(new_df)*4
+            else:
+                new_id ,new_df=vocabulary[term]
+
+                voc_id.append((term,new_df,pt))
+                pt+=new_df*4
+                #old_voc[term]=vocabulary[term]
+                new_posting[term]=posting[term]
+        print("inside",)
+        # save_posting(voc_id,new_posting,posting_file,FORMAT_STRUCT)
+        # save_voc(old_voc,voc_file)
+    else:
+        print("New posting")
+
+        voc_id=[]
+        pt=0
+        print(vocabulary.keys())       
+        for term in sorted(vocabulary.keys()):
+
+            id ,df=vocabulary[term]
+            voc_id.append((term,df,pt))
+            
+            pt+=df*4
+
+        print(posting,voc_id)
+
+    save_posting(voc_id,posting,posting_file,FORMAT_STRUCT)
+    save_voc(voc_id,voc_file)
+    
+    #return (voc_id,posting)
+    #save_posting(vo)
+
+def read_voc(voc_file):
+    vocs=[]
+    vocs_id={}
+    if (os.path.isfile(voc_file)):
+        with open(voc_file) as vocabulary:
+            lines =vocabulary.readlines()
+            for line in lines:
+                term=line.split()
+                vocs.append(term)
+                vocs_id[term[1]]=(term[2],term[3])
+    return vocs_id
+
 def plot_bar(values,label):
     index= np.arange(len(label))
     plt.bar(index,values)
     plt.xticks(index, label, fontsize=10, rotation=30)
     plt.show()
-
-
 
 def save_posting(vocs,posting,path,FORMAT_STRUCT):
     with open(path,"wb") as index:
@@ -94,7 +245,9 @@ def save_posting(vocs,posting,path,FORMAT_STRUCT):
 
 def save_voc(vocs,path):
     with open(path,"w") as voc:
+        
         for index,(term, value,pt) in enumerate(vocs):
+
             voc.write(str(index)+" "+str(term)+" "+str(value)+" "+str(pt)+"\n")
 
 # with open("voc.txt","w") as voc:
