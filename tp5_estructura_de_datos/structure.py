@@ -44,7 +44,8 @@ def calc_idf(corpus_count,doc_freq):
     return 0
 
 def indexer_limit(dirname,limit):
-
+        os.remove(posting_file)
+        os.remove(voc_file)
         files = get_files(dirname)
         vocabulary={}
         document_vector={}
