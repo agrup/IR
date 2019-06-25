@@ -9,9 +9,10 @@ postin_file="data.bin"
 voc_file="data.txt"
 
 #dirname="/home/agu/Unlu/IR/colecciones/wiki/en/"
-dirname="/home/agu/Unlu/IR/colecciones/data/"
+dirname="/home/agu/Unlu/IR/tp5_estructura_de_datos/data"
 
 vocs,posting = (indexer(dirname))
+#print(vocs)
 
 #vocs,posting = (indexer(dirname))
 save_posting(vocs,posting,postin_file,FORMAT_STRUCT)

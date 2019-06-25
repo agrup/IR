@@ -44,8 +44,6 @@ def calc_idf(corpus_count,doc_freq):
     return 0
 
 def indexer_limit(dirname,limit):
-        # files = listdir(dirname)
-        
 
         files = get_files(dirname)
         vocabulary={}
@@ -67,7 +65,6 @@ def indexer_limit(dirname,limit):
             print(limit-memory_used,limit,memory_used,file_size)
             time.sleep(1)
             if ((memory_used+file_size)>limit):
-
                 marge_posting(posting_file,voc_file,vocabulary,posting)
                 memory_used=0
                 vocabulary={}
@@ -79,7 +76,7 @@ def indexer_limit(dirname,limit):
             tokens=tokenizar(lines)
             for token in tokens:
                 if token not in vocabulary:
-                    print(token)
+                    #print(token)
                     vocabulary[token]=(id_voc,1)
                     docu_voc.append(id_voc)
                     posting[token]=[doc_id]
@@ -102,7 +99,7 @@ def indexer_limit(dirname,limit):
         #     voc_id.append((term,df[1],pt))
         #     pt+=df[1]*4
         # return (voc_id,posting)
-        #marge_posting(posting_file,voc_file,vocabulary,posting)
+        marge_posting(posting_file,voc_file,vocabulary,posting)
         return(posting_file)
 
 def indexer(dirname):
@@ -149,75 +146,70 @@ def indexer(dirname):
         return (voc_id,posting)
 
 def marge_posting(file_posting,voc_file,vocabulary,posting):
-    print("merge")
+    print("merge postin y vocabulario ...")
     
-
     len_data=len(binary_pack([1],FORMAT_STRUCT))
+    voc_id=[]
+    new_posting={}
     # size = int(os.path.getsize(file_posting)/len_data) 
     #new_terms = read_voc(voc_file)
-    if (os.path.isfile(file_posting)):
-        print("old posting exist")
-        new_posting={}
-        voc_id=[]
+    if (os.path.isfile(file_posting) ):
         pt=0
         old_voc = read_voc(voc_file)
         for term in vocabulary.keys():
-            #new_id ,new_df=vocabulary[term]
-
             if term in old_voc.keys():
-                
                 old_df,old_pt = old_voc[term] 
-                
                 with open(file_posting,"rb") as index:
                     index.seek(int(old_pt))
                     bin_old_posting = index.read(int(old_df)*len_data)
-                    print(int(old_df),len_data,term,old_pt)
-
                     old_posting = struct.unpack(FORMAT_STRUCT.format(int(old_df)),bin_old_posting)
-                    print(old_posting,"old posting")
                     new_posting[term]=list(old_posting)
                 new_df = int(old_df)
-                for postin in posting[term]:
-                    if postin not in new_posting[term]:     
-                        print(postin,"casa",new_posting[term])
-                        new_posting[term].append(postin)
-                        
-                        new_df+=1
 
-                #new_df += int(old_df)
+                for postin in posting[term]:
+                    
+                    if postin not in new_posting[term]:     
+                        new_posting[term].append(postin)
+                 
+                        new_df+=1
                 
                 voc_id.append((term,new_df,pt))
                 pt+=int(new_df)*4
             else:
                 new_id ,new_df=vocabulary[term]
-
+                
                 voc_id.append((term,new_df,pt))
                 pt+=new_df*4
-                #old_voc[term]=vocabulary[term]
                 new_posting[term]=posting[term]
-        print("inside",)
-        # save_posting(voc_id,new_posting,posting_file,FORMAT_STRUCT)
-        # save_voc(old_voc,voc_file)
+        
+        for term in old_voc.keys():
+            if term not in new_posting.keys():
+                new_df,new_id=old_voc[term]
+                voc_id.append((term,new_df,pt))
+                new_posting[term]=list(old_posting)
+
+                pt+=int(new_df)*4
+
     else:
-        print("New posting")
 
-        voc_id=[]
         pt=0
-        print(vocabulary.keys())       
+       
         for term in sorted(vocabulary.keys()):
+            new_posting[term]=[]
+            new_df=0
+            for postin in posting[term]:
+                if postin not in new_posting[term]:     
+                    new_posting[term].append(postin)        
+                    new_df+=1
 
-            id ,df=vocabulary[term]
-            voc_id.append((term,df,pt))
+                id ,df=vocabulary[term]
+                voc_id.append((term,df,pt))
             
-            pt+=df*4
+                pt+=df*4
 
-        print(posting,voc_id)
-
-    save_posting(voc_id,posting,posting_file,FORMAT_STRUCT)
+    save_posting(voc_id,new_posting,posting_file,FORMAT_STRUCT)
     save_voc(voc_id,voc_file)
-    
-    #return (voc_id,posting)
-    #save_posting(vo)
+
 
 def read_voc(voc_file):
     vocs=[]
@@ -229,6 +221,7 @@ def read_voc(voc_file):
                 term=line.split()
                 vocs.append(term)
                 vocs_id[term[1]]=(term[2],term[3])
+    #print(vocs_id,"vocs i")
     return vocs_id
 
 def plot_bar(values,label):
