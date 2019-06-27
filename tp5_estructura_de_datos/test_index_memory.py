@@ -8,6 +8,9 @@ FORMAT_SIZE=4
 postin_file="data.bin"
 voc_file="data.txt"
 
+
+
+
 #dirname="/home/agu/Unlu/IR/colecciones/wiki/en/"
 dirname="/home/agu/Unlu/IR/tp5_estructura_de_datos/data"
 

@@ -212,6 +212,13 @@ def marge_posting(file_posting,voc_file,vocabulary,posting):
     save_voc(voc_id,voc_file)
 
 
+def read_postin(file_posting,df,pt,len_data):
+    with open(file_posting,"rb") as index:
+        index.seek(int(pt))
+        bin_posting = index.read(int(df)*len_data)
+    return struct.unpack(FORMAT_STRUCT.format(df),bin_posting)
+    
+
 def read_voc(voc_file):
     vocs=[]
     vocs_id={}
