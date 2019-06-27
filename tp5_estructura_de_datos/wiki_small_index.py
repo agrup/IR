@@ -6,7 +6,7 @@ from query_parse import *
 
 FORMAT_STRUCT="{}I"
 FORMAT_SIZE=4
-postin_file="posting_list_wiki.bin"
+postin_file="posting_list_wiki.bin" 
 voc_file="voc_wiki.txt"
 
 dirname="/home/agu/Unlu/IR/colecciones/wiki/en/"

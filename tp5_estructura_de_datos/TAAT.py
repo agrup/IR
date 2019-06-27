@@ -1,10 +1,19 @@
 import heapq
 from structure import *
+import math 
 
+def Ranking_funtion_idf(term,indice,frecuencia,docs):
+    # print(frecuencia[term],term,indice[term][0])
+    print(docs,indice[term][0],"casa",term)
+    t_idf = docs /int(indice[term][0])
+    return math.log(t_idf,2)
+    # print(term)
+    # return frecuencia[term]
+    # return 1
 def Ranking_funtion():
     return 1
 
-def getPostings(term,indice,FORMAT_STRUCT,postin_list):
+def getPostings(term,indice,FORMAT_STRUCT,postin_list): 
     if term in indice.keys():
         len_data=len(binary_pack([1],FORMAT_STRUCT))
 
@@ -69,6 +78,36 @@ def taat(query,Indice,FORMAT_STRUCT,postin_list):
     # print(heapsort(Heap))
     return heapsort(Heap)
 
+
+
+def taat_idf(query,Indice,FORMAT_STRUCT,postin_list,frecuencia,docs):
+
+    postings=[]
+    document_acum={}
+    Heap = []
+    heapq.heapify(Heap)
+
+    # for term in query:
+    #     # postings.extend(getPostings(term))
+    #     postings.append(getPostings(term,Indice,FORMAT_STRUCT))
+    postings.append(getPostings(query,Indice,FORMAT_STRUCT,postin_list))
+    # print(frecuencia)
+
+    for posting in postings:
+        for doc_id in posting:
+            # print(doc_id)
+            if doc_id in document_acum.keys():
+                document_acum[doc_id]+=Ranking_funtion_idf(query,Indice,frecuencia,docs)
+            else:
+                document_acum[doc_id]=Ranking_funtion_idf(query,Indice,frecuencia,docs)
+
+
+
+    for term,acum in document_acum.items():
+        heapq.heappush(Heap,(acum,term))
+    # print(heapsort(Heap))
+    return heapsort(Heap)
+
 def taat_wp(query,Indice,FORMAT_STRUCT,postin_list,query_list):
 
     # print(query, query_list,"param")
@@ -83,41 +122,17 @@ def taat_wp(query,Indice,FORMAT_STRUCT,postin_list,query_list):
             for o_term in query.split():
                 if term != o_term:
                     for doc_id in postin_list[term]:
-                        print(term,o_term)
                         if (o_term,doc_id) in postin_list.keys():
                             for ub in postin_list[(term,doc_id)]:
                                 for o_ub in postin_list[(o_term,doc_id)]:
                                     print(ub,o_ub,doc_id)
                                     if ub in range(o_ub -3,o_ub+3):
-                                        print(term,"cssa")
                                         if doc_id in document_acum.keys():
                                             document_acum[str(doc_id)]+=Ranking_funtion()
                                         else:
                                             document_acum[str(doc_id)]=1
 
-                                        print(term,"ubicacion",ub,"documento",doc_id)
-                                        print(postin_list[(o_term,doc_id)])
     
-                        # print(postin_list[(term,doc_id)])
-                        # print(postin_list[(o_term,doc_id)])
-
-                    # print(term,"serca",o_term,"in",doc_id,postin_list[(term,doc_id)])
-    # elif query in postin_list:
-    #     for posting in postin_list[query]:
-            
-    #         for doc_id in [posting]:
-    #             # print(doc_id,query,query_list)
-    #             # print(postin_list[(query,doc_id)])
-    #             aux=[]
-    #             for term in query_list.split():
-    #                 if term not in ['or', 'and','not']:
-    #                     if term not in[query]:
-    #                         aux.append(term)
-    #             print(aux,query)
-    #             if doc_id in document_acum.keys():
-    #                 document_acum[str(doc_id)]+=Ranking_funtion()
-    #             else:
-    #                 document_acum[str(doc_id)]=10
 
         for term,acum in document_acum.items():
             heapq.heappush(Heap,(acum,term))

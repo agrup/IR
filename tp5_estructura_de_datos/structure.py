@@ -197,6 +197,64 @@ def indexer_wp(dirname):
             pt+=df[1]*4
         return (voc_id,posting,position)
 
+def indexer_vec(dirname):
+        # files = listdir(dirname)
+        files = get_files(dirname)
+        vocabulary={}
+        document_vector={}
+        id_voc=0
+        posting={}
+        doc_id=0
+        pt=0
+        size_dirname=0
+        size_disk=0
+        position={}
+        frecuencia={}
+        docs=0
+        for file in files:
+            docs+=1
+            with open(file,errors = 'ignore') as file_aux:
+                lines = file_aux.readlines()
+                size_dirname+=sys.getsizeof(file_aux)
+            
+            docu_voc=[]
+            tokens=tokenizar(lines)
+
+            pos_palabra=0
+            for token in tokens:
+                pos_palabra+=1
+                if token not in vocabulary:
+                    frecuencia[token]=1
+                    vocabulary[token]=(id_voc,1)
+                    posting[(token,doc_id)]=[pos_palabra]
+                    docu_voc.append(id_voc)
+                    posting[token]=[doc_id]
+                    id_voc =id_voc+1
+                else:
+                    frecuencia[token]+=1
+
+                    id,doc_freq = vocabulary[token]
+                    if id not in docu_voc:
+                        doc_freq = doc_freq+1
+                        docu_voc.append(id)
+                        posting[(token,doc_id)]=[pos_palabra]
+                        posting[token].append(doc_id)
+                    else:
+                        posting[(token,doc_id)].append(pos_palabra)
+                    vocabulary[token]=(id,doc_freq)
+                    pt+=doc_freq
+            document_vector[file]=docu_voc
+            
+            doc_id+=1
+        voc_id=[]
+        pt=0
+        for term in sorted(vocabulary.keys()):
+            df=vocabulary[term]
+            voc_id.append((term,df[1],pt))
+            pt+=df[1]*4
+        return (voc_id,posting,position,frecuencia,docs)
+
+
 def marge_posting(file_posting,voc_file,vocabulary,posting):
     print("merge postin y vocabulario ...")
     
