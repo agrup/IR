@@ -29,7 +29,7 @@ print("directory size",os.path.getsize(dirname))
 print("directory posting",os.path.getsize("posting_list.bin"))
 print("directory index",os.path.getsize("voc.txt"))
 print("---------------------------------------------")
-print("overhead",((os.path.getsize("posting_list.bin")-os.path.getsize("voc.txt")-os.path.getsize(dirname))/os.path.getsize("posting_list.bin"))/os.path.getsize("posting_list.bin"),"%")
+print("overhead",((os.path.getsize("posting_list.bin")+os.path.getsize("voc.txt")-os.path.getsize(dirname))/os.path.getsize("posting_list.bin"))/os.path.getsize("posting_list.bin"),"%")
 #print("result",size_obj_index+sys.getsizeof(vocs)-os.path.getsize(dirname))
 #print(vocs)
 

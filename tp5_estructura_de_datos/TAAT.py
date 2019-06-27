@@ -69,6 +69,61 @@ def taat(query,Indice,FORMAT_STRUCT,postin_list):
     # print(heapsort(Heap))
     return heapsort(Heap)
 
+def taat_wp(query,Indice,FORMAT_STRUCT,postin_list,query_list):
+
+    # print(query, query_list,"param")
+    postings=[]
+    document_acum={}
+    Heap = []
+    heapq.heapify(Heap)
+    print(query,"query")
+    # postings.append(getPostings(query,Indice,FORMAT_STRUCT,postin_list))
+    if len(query.split())>1:
+        for term in query.split():
+            for o_term in query.split():
+                if term != o_term:
+                    for doc_id in postin_list[term]:
+                        print(term,o_term)
+                        if (o_term,doc_id) in postin_list.keys():
+                            for ub in postin_list[(term,doc_id)]:
+                                for o_ub in postin_list[(o_term,doc_id)]:
+                                    print(ub,o_ub,doc_id)
+                                    if ub in range(o_ub -3,o_ub+3):
+                                        print(term,"cssa")
+                                        if doc_id in document_acum.keys():
+                                            document_acum[str(doc_id)]+=Ranking_funtion()
+                                        else:
+                                            document_acum[str(doc_id)]=1
+
+                                        print(term,"ubicacion",ub,"documento",doc_id)
+                                        print(postin_list[(o_term,doc_id)])
+    
+                        # print(postin_list[(term,doc_id)])
+                        # print(postin_list[(o_term,doc_id)])
+
+                    # print(term,"serca",o_term,"in",doc_id,postin_list[(term,doc_id)])
+    # elif query in postin_list:
+    #     for posting in postin_list[query]:
+            
+    #         for doc_id in [posting]:
+    #             # print(doc_id,query,query_list)
+    #             # print(postin_list[(query,doc_id)])
+    #             aux=[]
+    #             for term in query_list.split():
+    #                 if term not in ['or', 'and','not']:
+    #                     if term not in[query]:
+    #                         aux.append(term)
+    #             print(aux,query)
+    #             if doc_id in document_acum.keys():
+    #                 document_acum[str(doc_id)]+=Ranking_funtion()
+    #             else:
+    #                 document_acum[str(doc_id)]=10
+
+        for term,acum in document_acum.items():
+            heapq.heappush(Heap,(acum,term))
+        return heapsort(Heap)
+    else:
+        return heapsort(Heap)
 
 def taat_memory(query,Indice,FORMAT_STRUCT,postin_list):
 

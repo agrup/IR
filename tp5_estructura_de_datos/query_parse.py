@@ -32,6 +32,43 @@ def token_query(query):
         # print(query_result)
     return query_result
 
+def find_wp(query,indice,FORMAT_STRUCT,postin_list):
+    # print(query,"Query iniciada")
+    result=[]
+    or_conjunto =set()
+    for subquery in get_or_queries(query):
+        and_conjunto=set()
+        not_conjunto=set()
+        # print(subquery)
+
+
+        for phrase in get_and_query(subquery):
+            # print(phrase,"--")
+            if "NOT" in phrase.split():
+                for term in get_not_query(phrase):
+                    docs=TAAT.taat_wp(term,indice,FORMAT_STRUCT,postin_list,subquery)
+                    if len(not_conjunto)==0:
+                        for docs_id in docs:
+                            # print(docs_id)
+                            not_conjunto.add(docs_id)
+                        # print(not_conjunto,len(not_conjunto))
+                    else:
+                        not_conjunto.union(docs)
+                    # print(term,"term",not_conjunto)
+            else:
+                if len(and_conjunto)==0:
+                    docs=TAAT.taat_wp(phrase.strip(),indice,FORMAT_STRUCT,postin_list,subquery)
+                    for id in docs:
+                        and_conjunto.add(id)
+                    # print(and_conjunto)
+                else:
+                    docs=TAAT.taat_wp(phrase,indice,FORMAT_STRUCT,postin_list,subquery)
+                    and_conjunto= and_conjunto.intersection(docs)
+            # print(and_conjunto)
+        # print(not_conjunto)
+        or_conjunto = or_conjunto.union(and_conjunto)
+        or_conjunto = or_conjunto.difference(not_conjunto)
+    return(list(or_conjunto),"result")
 
 def find(query,indice,FORMAT_STRUCT,postin_list):
     # print(query,"Query iniciada")
