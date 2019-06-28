@@ -211,6 +211,7 @@ def indexer_vec(dirname):
         position={}
         frecuencia={}
         docs=0
+        docs_normal={}
         for file in files:
             docs+=1
             with open(file,errors = 'ignore') as file_aux:
@@ -222,8 +223,18 @@ def indexer_vec(dirname):
 
             pos_palabra=0
             for token in tokens:
+
+                if doc_id not in docs_normal.keys():
+                    docs_normal[doc_id]=1
+                else:
+                    docs_normal[doc_id]+=1
+
+
                 pos_palabra+=1
                 if token not in vocabulary:
+
+                    
+
                     frecuencia[token]=1
                     vocabulary[token]=(id_voc,1)
                     posting[(token,doc_id)]=[pos_palabra]
@@ -248,11 +259,17 @@ def indexer_vec(dirname):
             doc_id+=1
         voc_id=[]
         pt=0
+        
+
+
         for term in sorted(vocabulary.keys()):
             df=vocabulary[term]
             voc_id.append((term,df[1],pt))
+
             pt+=df[1]*4
-        return (voc_id,posting,position,frecuencia,docs)
+
+
+        return (voc_id,posting,position,frecuencia,docs,docs_normal)
 
 
 def marge_posting(file_posting,voc_file,vocabulary,posting):

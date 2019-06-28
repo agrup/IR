@@ -160,6 +160,55 @@ def find_vectorial(query,indice,FORMAT_STRUCT,postin_list,frecuencia,docs_t):
     # return(list(or_conjunto),"result")
 
 
+
+def find_vectorial_2(query,indice,FORMAT_STRUCT,postin_list,frecuencia,docs_t,docs_normal):
+    # print(query,"Query iniciada")
+    result=[]
+    or_conjunto =set()
+    for subquery in get_or_queries(query):
+        and_conjunto=set()
+        not_conjunto=set()
+        # print(subquery)
+
+
+        for phrase in get_and_query(subquery):
+            # print(phrase,"--")
+            if "NOT" in phrase.split():
+                for term in get_not_query(phrase):
+                    docs=TAAT.taat_idf_2(term,indice,FORMAT_STRUCT,postin_list,frecuencia,docs_t,docs_normal) 
+                    if len(not_conjunto)==0:
+                        for docs_id in docs:
+                            # print(docs_id)
+                            not_conjunto.add(docs_id)
+                        # print(not_conjunto,len(not_conjunto))
+                    else:
+                        not_conjunto.union(docs)
+                    # print(term,"term",not_conjunto)
+            else:
+                if len(and_conjunto)==0:
+                    docs=TAAT.taat_idf_2(phrase.strip(),indice,FORMAT_STRUCT,postin_list,frecuencia,docs_t,docs_normal)
+                    for id in docs:
+                        and_conjunto.add(id)
+                    # print(and_conjunto)
+                else:
+                    docs=TAAT.taat_idf_2(phrase,indice,FORMAT_STRUCT,postin_list,frecuencia,docs_t,docs_normal)
+                    and_conjunto= and_conjunto.intersection(docs)
+            # print(and_conjunto)
+        # print(not_conjunto)
+        or_conjunto = or_conjunto.union(and_conjunto)
+        or_conjunto = or_conjunto.difference(not_conjunto)
+    result={}
+    # print(or_conjunto)
+    for r,doc_id in or_conjunto:
+        if doc_id not in result.keys():
+            result[doc_id]=r
+        else:
+            result[doc_id]+=r
+    # return(list(or_conjunto),"result")
+    return result
+    # return(list(or_conjunto),"result")
+
+
 def find_memory(query,indice,FORMAT_STRUCT,postin_list):
     # print(query,"Query iniciada")
     result=[]
