@@ -4,12 +4,21 @@ import math
 
 def Ranking_funtion_idf(term,indice,frecuencia,docs):
     # print(frecuencia[term],term,indice[term][0])
-    print(docs,indice[term][0],"casa",term)
+    
+    # print(docs,indice[term][0],"casa",term)
     t_idf = docs /int(indice[term][0])
     return math.log(t_idf,2)
-    # print(term)
-    # return frecuencia[term]
-    # return 1
+
+# def Ranking_funtion_idf_df(term,indice,frecuencia,query,docs_normal):
+#     # print(docs_normal,query)
+#     return docs_normal  
+    # return math.log(t_idf,2)
+
+def Ranking_funtion_idf_2(term,indice,frecuencia,query,docs_normal):
+    # print(docs_normal,query,"casa")
+    return int(indice[term][0]  )
+
+
 def Ranking_funtion():
     return 1
 
@@ -80,6 +89,37 @@ def taat(query,Indice,FORMAT_STRUCT,postin_list):
 
 
 
+def taat_idf_2(query,Indice,FORMAT_STRUCT,postin_list,frecuencia,docs,docs_normal):
+
+
+    postings=[]
+    document_acum={}
+    Heap = []
+    heapq.heapify(Heap)
+
+    # for term in query:
+    #     # postings.extend(getPostings(term))
+    #     postings.append(getPostings(term,Indice,FORMAT_STRUCT))
+    postings.append(getPostings(query,Indice,FORMAT_STRUCT,postin_list))
+    # print(frecuencia)
+
+    for posting in postings:
+        for doc_id in posting:
+            # print(doc_id)
+            if doc_id in document_acum.keys():
+                document_acum[doc_id]+=Ranking_funtion_idf_2(query,Indice,frecuencia,docs,docs_normal)
+            else:
+                document_acum[doc_id]=Ranking_funtion_idf_2(query,Indice,frecuencia,docs,docs_normal)
+
+
+
+    for term,acum in document_acum.items():
+        heapq.heappush(Heap,(acum,term))
+    # print(heapsort(Heap))
+    return heapsort(Heap)
+
+
+
 def taat_idf(query,Indice,FORMAT_STRUCT,postin_list,frecuencia,docs):
 
     postings=[]
@@ -107,6 +147,34 @@ def taat_idf(query,Indice,FORMAT_STRUCT,postin_list,frecuencia,docs):
         heapq.heappush(Heap,(acum,term))
     # print(heapsort(Heap))
     return heapsort(Heap)
+
+# def taat_d_qq(query,Indice,FORMAT_STRUCT,postin_list,frecuencia,docs):
+
+#     postings=[]
+#     document_acum={}
+#     Heap = []
+#     heapq.heapify(Heap)
+
+#     # for term in query:
+#     #     # postings.extend(getPostings(term))
+#     #     postings.append(getPostings(term,Indice,FORMAT_STRUCT))
+#     postings.append(getPostings(query,Indice,FORMAT_STRUCT,postin_list))
+#     # print(frecuencia)
+
+#     for posting in postings:
+#         for doc_id in posting:
+#             # print(doc_id)
+#             if doc_id in document_acum.keys():
+#                 document_acum[doc_id]+=Ranking_funtion_idf_df(query,Indice,frecuencia,docs)
+#             else:
+#                 document_acum[doc_id]=Ranking_funtion_idf_df(query,Indice,frecuencia,docs)
+
+ 
+
+#     for term,acum in document_acum.items():
+#         heapq.heappush(Heap,(acum,term))
+#     # print(heapsort(Heap))
+#     return heapsort(Heap)
 
 def taat_wp(query,Indice,FORMAT_STRUCT,postin_list,query_list):
 
